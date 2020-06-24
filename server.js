@@ -38,22 +38,9 @@ require('./data/reddit-db');
 //Controller routes
 require('./controllers/posts.js')(app);     //route for creating a new post
 
-//ROUTES
-//landing page
-app.get('/', (req, res) => {
-    res.render('index');
-})
 
 
-// //view a post
-// app.get('/posts', (req, res) => {
-//     res.render('index');
-// })
-
-// //create a post
-// app.get('/posts/new', (req, res) => {
-//     res.render('posts-new');
-// })
+module.exports = app;
 
 
 

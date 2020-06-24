@@ -1,12 +1,25 @@
+//all the routes pertaining to posts
+
 const Post = require('../models/posts');
 
 module.exports = app => {
-  //go to the create new post form
+  //landing page
+  app.get('/', (req, res) => {
+    Post.find({}).lean()
+      .then(posts => {
+        res.render("posts-index", { posts });
+      })
+      .catch(err => {
+        console.log(err.message);
+      });
+  })
+
+  //get form to create new post 
   app.get('/posts/new', (req, res) => {
       res.render('posts-new');
   })
 
-  //creating and submmitting a new post to db
+  //creating and submmitting(posting) a new post to db
   app.post('/posts/new', (req, res) => {
     // INSTANTIATE INSTANCE OF POST MODEL
     const post = new Post(req.body);
@@ -23,7 +36,7 @@ module.exports = app => {
     })
   });
 
-  //page to view a specific post
+  //get page to view a specific post
   app.get("/posts/:id", function(req, res) {
     // LOOK UP THE POST
     Post.findById(req.params.id)
@@ -34,4 +47,16 @@ module.exports = app => {
         console.log(err.message);
       });
   });
+
+  //Get all the posts in a SUBREDDIT
+  app.get("/n/:subreddit", function(req, res) {
+    Post.find({ subreddit: req.params.subreddit })
+      .then(posts => {
+        res.render("posts-index", { posts });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+
 };
