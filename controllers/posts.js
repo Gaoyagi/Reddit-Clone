@@ -1,6 +1,7 @@
 //all the routes pertaining to posts
 
 const Post = require('../models/posts');
+const Comment = require('../models/comments');
 
 module.exports = app => {
   //landing page
@@ -39,13 +40,11 @@ module.exports = app => {
   //get page to view a specific post
   app.get("/posts/:id", function(req, res) {
     // LOOK UP THE POST
-    Post.findById(req.params.id)
-      .then(post => {
-        res.render("posts-show", { post });
-      })
-      .catch(err => {
-        console.log(err.message);
-      });
+    Post.findById(req.params.id).populate('comments').then((post) => {
+      res.render('posts-show', { post })
+    }).catch((err) => {
+      console.log(err.message)
+    })
   });
 
   //Get all the posts in a SUBREDDIT

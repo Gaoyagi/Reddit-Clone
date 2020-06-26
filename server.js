@@ -36,7 +36,8 @@ app.listen(process.env.PORT ||port, () => console.log(`Example app listening on 
 require('./data/reddit-db');
 
 //Controller routes
-require('./controllers/posts.js')(app);     //route for creating a new post
+require('./controllers/posts.js')(app);     //routes for posts
+require('./controllers/comments.js')(app);  //routes for comments
 
 
 
