@@ -1,4 +1,5 @@
-/* Mongoose Connection */
+/*creates new mongo db damed reddit-db*/
+/* establishes Mongoose Connection and variable*/
 const mongoose = require("mongoose");
 assert = require("assert");
 

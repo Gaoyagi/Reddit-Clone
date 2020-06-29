@@ -40,8 +40,10 @@ module.exports = app => {
   //get page to view a specific post
   app.get("/posts/:id", function(req, res) {
     // LOOK UP THE POST
-    Post.findById(req.params.id).populate('comments').then((post) => {
-      res.render('posts-show', { post })
+    Post.findById(req.params.id).populate('comments')
+      .then((post) => {
+        console.log(post)
+        res.render('posts-show', { post })
     }).catch((err) => {
       console.log(err.message)
     })
