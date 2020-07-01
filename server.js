@@ -1,21 +1,21 @@
-// Require Libraries/middlewares
+// Require outside Libraries and middlewares
 require('dotenv').config();
 const express = require('express');
-const app = express();
 const Handlebars = require('handlebars');
-
 const exphbs  = require('express-handlebars');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
-
 var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+
+//create express app
+const app = express();      
 
 // Use Body Parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Add after body parser initialization!
+//use express validator
 app.use(expressValidator());
 
 //use cookie parser
@@ -32,7 +32,23 @@ app.engine('handlebars', exphbs({
     handlebars: allowInsecurePrototypeAccess(Handlebars)
   })
 );
-app.set('view engine', 'handlebars');                           //Use handlebars to render
+app.set('view engine', 'handlebars');                             //Use handlebars to render
+
+//custom middle ware to check token for auth
+var checkAuth = (req, res, next) => {
+  console.log("Checking authentication");
+  if (typeof req.cookies.nToken === "undefined" || req.cookies.nToken === null) {
+    req.user = null;
+    console.log("invalid auth")
+  } else {
+    var token = req.cookies.nToken;
+    var decodedToken = jwt.decode(token, { complete: true }) || {};
+    req.user = decodedToken.payload;
+  }
+
+  next();
+};
+app.use(checkAuth);
 
 // Tell the app what port to listen on
 const port = 3000

@@ -1,19 +1,22 @@
 const Post = require('../models/posts');
 const Comment = require('../models/comments');
 
+
 module.exports = function(app) {
     // CREATE Comment
     app.post("/posts/:postId/comments", function(req, res) {
         // INSTANTIATE INSTANCE OF MODEL
         const comment = new Comment(req.body);
-      
+        console.log(req)
+        comment.author = req.user._id;
+
         // SAVE INSTANCE OF Comment MODEL TO DB
         comment
           .save()             //first save the model to db
           .then(comment => {  //then find the comment
             return Post.findById(req.params.postId);    //returns a post
           })
-          .then( post => {   //reorganize comments by newest 
+          .then( post => {   //rfind the post the comment was saved to and sort them by newest and the resave the post
             post.comments.unshift(comment);
             return post.save();
           })
@@ -23,6 +26,7 @@ module.exports = function(app) {
           .catch(err => {   //error catcher
             console.log(err);
           });
+
       });
 };
 

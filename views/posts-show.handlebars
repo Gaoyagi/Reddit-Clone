@@ -2,17 +2,21 @@
   <div class="col-sm-6 col-sm-offset-3">
     <a href="{{post.url}}" class="lead">{{post.title}}</a>
     <p>{{post.summary}}</p>
+    <p>{{post.author.username}}</p>
   </div>
 </div>
 
-<form action="/posts/{{post._id}}/comments" method="post">
-    <textarea class='form-control' name="content" placeholder="Comment"></textarea>
-    <div class="text-right">
-      <button type="submit" class="btn btn-primary">Save</button>
-    </div>
-</form>
+{{#if currentUser}}
+  <form action="/posts/{{post._id}}/comments" method="post">
+      <textarea class='form-control' name="content" placeholder="Comment"></textarea>
+      <div class="text-right">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+  </form>
+{{/if}}
 
 {{#each post.comments}}
   <p>{{this.content}}</p>
+  <p class="text-right">{{this.author.username}}</p>
 {{/each}}
 

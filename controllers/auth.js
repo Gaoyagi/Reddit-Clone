@@ -10,13 +10,13 @@ module.exports = (app) => {
   const user = new User(req.body);
 
   user
-    .save()
+    .save()       //saves new user to db
     .then(user => {
       var token = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: "60 days" });    //crates JW token
       res.cookie('nToken', token, { maxAge: 900000, httpOnly: true });     //creates cookie out of JW token called 'nToken'
-      res.redirect('/');
+      res.redirect('/');    //redirect to home after youre done
     })
-    .catch(err => {
+    .catch(err => {     //error catcher
       console.log(err.message);
       return res.status(400).send({ err: err });
     });
