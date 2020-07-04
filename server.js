@@ -34,7 +34,7 @@ app.engine('handlebars', exphbs({
 );
 app.set('view engine', 'handlebars');                             //Use handlebars to render
 
-//custom middle ware to check token for auth
+//custom middle ware to check token for auth/logged in user
 var checkAuth = (req, res, next) => {
   console.log("Checking authentication");
   if (typeof req.cookies.nToken === "undefined" || req.cookies.nToken === null) {
@@ -49,6 +49,9 @@ var checkAuth = (req, res, next) => {
   next();
 };
 app.use(checkAuth);
+
+//includestyling
+app.use(express.static('public'));
 
 // Tell the app what port to listen on
 const port = 3000

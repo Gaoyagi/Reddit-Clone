@@ -27,23 +27,27 @@ module.exports = app => {
   app.post('/posts/new', (req, res) => {
     //check if user is logged in
     if (req.user) {
-      //instantiate new post 
-      var post = new Post(req.body);
-      post.author = req.user._id;
-      post
-          .save()   //save post to db
-          .then(post => {       //find the newly saved post
-              return User.findById(req.user._id);
-          })
-          .then(user => {       //rearrange the posts in the db to go by newest
-              user.posts.unshift(post);
-              user.save();      //resave the posts
-              // REDIRECT TO THE NEW POST
-              res.redirect(`/posts/${post._id}`);
-          })
-          .catch(err => {
-              console.log(err.message);
-          });
+      //instantiate new post model
+    var post = new Post(req.body);
+    //fill the models fields
+    post.author = req.user._id;
+    post.upVotes = [];
+    post.downVotes = [];
+    post.voteScore = 0;
+    post
+        .save()   //save post to db
+        .then(post => {       //find the newly saved post
+            return User.findById(req.user._id);
+        })
+        .then(user => {       //rearrange the posts in the db to go by newest
+            user.posts.unshift(post);
+            user.save();      //resave the posts
+            // REDIRECT TO THE NEW POST
+            res.redirect(`/posts/${post._id}`);
+        })
+        .catch(err => {
+            console.log(err.message);
+        });
       } else { //elese throw an error
           return res.status(401); // UNAUTHORIZED
       }
@@ -71,6 +75,28 @@ module.exports = app => {
         .catch(err => {
             console.log(err);
         });
+  });
+
+  //upvote
+  app.put("/posts/:id/vote-up", function(req, res) {
+    Post.findById(req.params.id).exec(function(err, post) {
+      post.upVotes.push(req.user._id);
+      post.voteScore = post.voteScore + 1;
+      post.save();
+  
+      res.status(200);
+    });
+  });
+  
+  //downvote
+  app.put("/posts/:id/vote-down", function(req, res) {
+    Post.findById(req.params.id).exec(function(err, post) {
+      post.downVotes.push(req.user._id);
+      post.voteScore = post.voteScore - 1;
+      post.save();
+  
+      res.status(200);
+    });
   });
 
 };
