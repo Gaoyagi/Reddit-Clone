@@ -62,6 +62,7 @@ require('./data/reddit-db');
 require('./controllers/posts.js')(app);     //routes for posts
 require('./controllers/comments.js')(app);  //routes for comments
 require('./controllers/auth.js')(app);      //routes for auth
+require('./controllers/replies.js')(app);
 
 
 

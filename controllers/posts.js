@@ -7,15 +7,6 @@ const User = require('../models/user');
 module.exports = app => {
   //landing page
   app.get('/', (req, res) => {
-    // var currentUser = req.user;
-
-    // Post.find({})
-    // .then(posts => {
-    //   res.render("posts-index", { posts, currentUser });
-    // })
-    // .catch(err => {
-    //   console.log(err.message);
-    // });
     var currentUser = req.user;
     // res.render('home', {});
     console.log(req.cookies);
@@ -58,29 +49,28 @@ module.exports = app => {
       }
   });
 
-  //get page to view a specific post
+  //get page to show a specific post
   app.get("/posts/:id", function(req, res) {
-    //look up the user?
-    var currentUser = req.user;
-    Post.findById(req.params.id).populate({path:'comments', populate: {path: 'author'}}).populate('author')
-       .then(post => {
-           res.render("posts-show", { post, currentUser });  
-       })
-       .catch(err => {
-           console.log(err.message);
-       });
+    var currentUser = req.user;     //get the user who published it? or get the user who wants to 
+    Post.findById(req.params.id).populate('comments').lean()    //find post by?
+        .then(post => {
+            res.render("posts-show", { post, currentUser });    //take the found post and then return it to the posts-show page
+        })
+        .catch(err => {                                         //if you cant find the post throw an error
+            console.log(err.message);
+        });
   });
 
   //Get all the posts in a SUBREDDIT
   app.get("/n/:subreddit", function(req, res) {
-    var currentUser = req.user;
-    Post.find({ subreddit: req.params.subreddit }).populate('author')
-      .then(posts => {
-          res.render("posts-index", { posts, currentUser });
-      })
-      .catch(err => {
-          console.log(err);
-      });
+    var currentUser = req.user;     //get the user who published via?
+    Post.find({ subreddit: req.params.subreddit }).lean()
+        .then(posts => {
+            res.render("posts-index", { posts, currentUser });
+        })
+        .catch(err => {
+            console.log(err);
+        });
   });
 
 };
