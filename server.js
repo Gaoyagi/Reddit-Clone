@@ -3,10 +3,12 @@ require('dotenv').config();
 const express = require('express');
 const Handlebars = require('handlebars');
 const exphbs  = require('express-handlebars');
+const expressSanitizer = require('express-sanitizer');    
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+
 
 //create express app
 const app = express();      
@@ -34,6 +36,8 @@ app.engine('handlebars', exphbs({
 );
 app.set('view engine', 'handlebars');                             //Use handlebars to render
 
+app.use(expressSanitizer());      //sanitizes inputs
+
 //custom middle ware to check token for auth/logged in user
 var checkAuth = (req, res, next) => {
   console.log("Checking authentication");
@@ -50,7 +54,7 @@ var checkAuth = (req, res, next) => {
 };
 app.use(checkAuth);
 
-//includestyling
+//include styling
 app.use(express.static('public'));
 
 // Tell the app what port to listen on

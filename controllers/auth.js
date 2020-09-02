@@ -7,19 +7,21 @@ module.exports = (app) => {
   //post signup form to data base
   app.post("/sign-up", (req, res) => {
     // Create User (and JWT?)
-  const user = new User(req.body);
+    req.sanitize(req.body.username);
+    req.sanitize(req.body.password);
+    const user = new User(req.body);
 
-  user
-    .save()       //saves new user to db
-    .then(user => {
-      var token = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: "60 days" });    //crates JW token
-      res.cookie('nToken', token, { maxAge: 900000, httpOnly: true });     //creates cookie out of JW token called 'nToken'
-      res.redirect('/');    //redirect to home after youre done
-    })
-    .catch(err => {     //error catcher
-      console.log(err.message);
-      return res.status(400).send({ err: err });
-    });
+    user
+      .save()       //saves new user to db
+      .then(user => {
+        var token = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: "60 days" });    //crates JW token
+        res.cookie('nToken', token, { maxAge: 900000, httpOnly: true });     //creates cookie out of JW token called 'nToken'
+        res.redirect('/');    //redirect to home after youre done
+      })
+      .catch(err => {     //error catcher
+        console.log(err.message);
+        return res.status(400).send({ err: err });
+      });
   });
 
   //get form to create new user 
@@ -41,8 +43,8 @@ app.get('/login', (req, res) => {
 
   // LOGIN
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const username = req.sanitize(req.body.username);
+  const password = req.sanitize(req.body.password);
   // Find this user name
   User.findOne({ username }, "username password")
     .then(user => {
